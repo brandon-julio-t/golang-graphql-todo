@@ -13,3 +13,12 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+/graph/generated/
+/graph/generated/*
+
+/frontend/node_modules/
+/frontend/.cache/*
+
+/public/
+/tmp/
