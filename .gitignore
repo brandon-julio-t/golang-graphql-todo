@@ -15,6 +15,7 @@
 # vendor/
 
 /graph/generated/*
+/graph/model/models_gen.go
 
 /frontend/node_modules/*
 /frontend/.cache/*
