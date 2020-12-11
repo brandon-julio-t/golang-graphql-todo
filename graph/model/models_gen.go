@@ -2,35 +2,21 @@
 
 package model
 
-type Assistant struct {
-	ID      string `json:"id"`
-	Initial string `json:"initial"`
-	Name    string `json:"name"`
+type NewTodo struct {
+	Text string `json:"text"`
 }
 
-type FindAssistantByID struct {
-	ID string `json:"id"`
-}
-
-type FindAssistantByInitial struct {
-	Initial string `json:"initial"`
-}
-
-type FindTodoByID struct {
-	ID string `json:"id"`
-}
-
-type MarkTodoAsDone struct {
+type Todo struct {
 	ID   string `json:"id"`
+	Text string `json:"text"`
 	Done bool   `json:"done"`
 }
 
-type NewAssistant struct {
-	Initial string `json:"initial"`
-	Name    string `json:"name"`
+type TodoByID struct {
+	ID string `json:"id"`
 }
 
-type NewTodo struct {
-	Text             string `json:"text"`
-	AssistantInitial string `json:"assistantInitial"`
+type UpdateTodo struct {
+	ID   string `json:"id"`
+	Text string `json:"text"`
 }

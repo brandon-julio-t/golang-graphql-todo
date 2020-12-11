@@ -16,7 +16,6 @@
 
 /graph/generated/*
 /graph/model/models_gen.go
-/graph/generated/generated.go
 
 /frontend/node_modules/*
 /frontend/.cache/*

@@ -7,21 +7,13 @@
 # # # # # # #
 
 type Query {
-  assistants: [Assistant!]!
-  todos: [Todo!]!
+  allTodo: [Todo!]!
 }
 
 type Todo {
   id: ID!
   text: String!
   done: Boolean!
-  assistant: Assistant!
-}
-
-type Assistant {
-  id: ID!
-  initial: String!
-  name: String!
 }
 
 # # # # # # # # # #
@@ -30,38 +22,20 @@ type Assistant {
 
 type Mutation {
   createTodo(input: NewTodo!): Todo!
-  updateTodo(input: NewTodo!): Todo!
-  deleteTodo(input: FindTodoById!): Todo!
-  toggleTodoDoneStatus(input: FindTodoById!): Todo!
-
-  createAssistant(input: NewAssistant!): Assistant!
-  updateAssistant(input: NewAssistant!): Assistant!
-  deleteAssistant(input: FindAssistantById!): Assistant!
+  updateTodo(input: UpdateTodo!): Todo!
+  deleteTodo(input: TodoById!): Todo!
+  toggleTodoDoneStatus(input: TodoById!): Todo!
 }
 
 input NewTodo {
   text: String!
-  assistantInitial: String!
 }
 
-input FindTodoById {
-  id: String!
+input UpdateTodo {
+  id: ID!
+  text: String!
 }
 
-input MarkTodoAsDone {
-  id: String!
-  done: Boolean!
-}
-
-input NewAssistant {
-  initial: String!
-  name: String!
-}
-
-input FindAssistantById {
-  id: String!
-}
-
-input FindAssistantByInitial {
-  initial: String!
+input TodoById {
+  id: ID!
 }

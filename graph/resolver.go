@@ -9,6 +9,5 @@ import "github.com/brandon-julio-t/golang-graphql-todo/graph/model"
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 type Resolver struct {
-	assistants []*model.Assistant
-	todos      []*model.Todo
+	allTodo []*model.Todo
 }

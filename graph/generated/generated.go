@@ -37,57 +37,38 @@ type Config struct {
 type ResolverRoot interface {
 	Mutation() MutationResolver
 	Query() QueryResolver
-	Todo() TodoResolver
 }
 
 type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
-	Assistant struct {
-		ID      func(childComplexity int) int
-		Initial func(childComplexity int) int
-		Name    func(childComplexity int) int
-	}
-
 	Mutation struct {
-		CreateAssistant      func(childComplexity int, input model.NewAssistant) int
 		CreateTodo           func(childComplexity int, input model.NewTodo) int
-		DeleteAssistant      func(childComplexity int, input model.FindAssistantByID) int
-		DeleteTodo           func(childComplexity int, input model.FindTodoByID) int
-		ToggleTodoDoneStatus func(childComplexity int, input model.FindTodoByID) int
-		UpdateAssistant      func(childComplexity int, input model.NewAssistant) int
-		UpdateTodo           func(childComplexity int, input model.NewTodo) int
+		DeleteTodo           func(childComplexity int, input model.TodoByID) int
+		ToggleTodoDoneStatus func(childComplexity int, input model.TodoByID) int
+		UpdateTodo           func(childComplexity int, input model.UpdateTodo) int
 	}
 
 	Query struct {
-		Assistants func(childComplexity int) int
-		Todos      func(childComplexity int) int
+		AllTodo func(childComplexity int) int
 	}
 
 	Todo struct {
-		Assistant func(childComplexity int) int
-		Done      func(childComplexity int) int
-		ID        func(childComplexity int) int
-		Text      func(childComplexity int) int
+		Done func(childComplexity int) int
+		ID   func(childComplexity int) int
+		Text func(childComplexity int) int
 	}
 }
 
 type MutationResolver interface {
 	CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error)
-	UpdateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error)
-	DeleteTodo(ctx context.Context, input model.FindTodoByID) (*model.Todo, error)
-	ToggleTodoDoneStatus(ctx context.Context, input model.FindTodoByID) (*model.Todo, error)
-	CreateAssistant(ctx context.Context, input model.NewAssistant) (*model.Assistant, error)
-	UpdateAssistant(ctx context.Context, input model.NewAssistant) (*model.Assistant, error)
-	DeleteAssistant(ctx context.Context, input model.FindAssistantByID) (*model.Assistant, error)
+	UpdateTodo(ctx context.Context, input model.UpdateTodo) (*model.Todo, error)
+	DeleteTodo(ctx context.Context, input model.TodoByID) (*model.Todo, error)
+	ToggleTodoDoneStatus(ctx context.Context, input model.TodoByID) (*model.Todo, error)
 }
 type QueryResolver interface {
-	Assistants(ctx context.Context) ([]*model.Assistant, error)
-	Todos(ctx context.Context) ([]*model.Todo, error)
-}
-type TodoResolver interface {
-	Assistant(ctx context.Context, obj *model.Todo) (*model.Assistant, error)
+	AllTodo(ctx context.Context) ([]*model.Todo, error)
 }
 
 type executableSchema struct {
@@ -105,39 +86,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	_ = ec
 	switch typeName + "." + field {
 
-	case "Assistant.id":
-		if e.complexity.Assistant.ID == nil {
-			break
-		}
-
-		return e.complexity.Assistant.ID(childComplexity), true
-
-	case "Assistant.initial":
-		if e.complexity.Assistant.Initial == nil {
-			break
-		}
-
-		return e.complexity.Assistant.Initial(childComplexity), true
-
-	case "Assistant.name":
-		if e.complexity.Assistant.Name == nil {
-			break
-		}
-
-		return e.complexity.Assistant.Name(childComplexity), true
-
-	case "Mutation.createAssistant":
-		if e.complexity.Mutation.CreateAssistant == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_createAssistant_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.CreateAssistant(childComplexity, args["input"].(model.NewAssistant)), true
-
 	case "Mutation.createTodo":
 		if e.complexity.Mutation.CreateTodo == nil {
 			break
@@ -150,18 +98,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateTodo(childComplexity, args["input"].(model.NewTodo)), true
 
-	case "Mutation.deleteAssistant":
-		if e.complexity.Mutation.DeleteAssistant == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_deleteAssistant_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.DeleteAssistant(childComplexity, args["input"].(model.FindAssistantByID)), true
-
 	case "Mutation.deleteTodo":
 		if e.complexity.Mutation.DeleteTodo == nil {
 			break
@@ -172,7 +108,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeleteTodo(childComplexity, args["input"].(model.FindTodoByID)), true
+		return e.complexity.Mutation.DeleteTodo(childComplexity, args["input"].(model.TodoByID)), true
 
 	case "Mutation.toggleTodoDoneStatus":
 		if e.complexity.Mutation.ToggleTodoDoneStatus == nil {
@@ -184,19 +120,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.ToggleTodoDoneStatus(childComplexity, args["input"].(model.FindTodoByID)), true
-
-	case "Mutation.updateAssistant":
-		if e.complexity.Mutation.UpdateAssistant == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_updateAssistant_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.UpdateAssistant(childComplexity, args["input"].(model.NewAssistant)), true
+		return e.complexity.Mutation.ToggleTodoDoneStatus(childComplexity, args["input"].(model.TodoByID)), true
 
 	case "Mutation.updateTodo":
 		if e.complexity.Mutation.UpdateTodo == nil {
@@ -208,28 +132,14 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateTodo(childComplexity, args["input"].(model.NewTodo)), true
+		return e.complexity.Mutation.UpdateTodo(childComplexity, args["input"].(model.UpdateTodo)), true
 
-	case "Query.assistants":
-		if e.complexity.Query.Assistants == nil {
+	case "Query.allTodo":
+		if e.complexity.Query.AllTodo == nil {
 			break
 		}
 
-		return e.complexity.Query.Assistants(childComplexity), true
-
-	case "Query.todos":
-		if e.complexity.Query.Todos == nil {
-			break
-		}
-
-		return e.complexity.Query.Todos(childComplexity), true
-
-	case "Todo.assistant":
-		if e.complexity.Todo.Assistant == nil {
-			break
-		}
-
-		return e.complexity.Todo.Assistant(childComplexity), true
+		return e.complexity.Query.AllTodo(childComplexity), true
 
 	case "Todo.done":
 		if e.complexity.Todo.Done == nil {
@@ -325,21 +235,13 @@ var sources = []*ast.Source{
 # # # # # # #
 
 type Query {
-  assistants: [Assistant!]!
-  todos: [Todo!]!
+  allTodo: [Todo!]!
 }
 
 type Todo {
   id: ID!
   text: String!
   done: Boolean!
-  assistant: Assistant!
-}
-
-type Assistant {
-  id: ID!
-  initial: String!
-  name: String!
 }
 
 # # # # # # # # # #
@@ -348,40 +250,22 @@ type Assistant {
 
 type Mutation {
   createTodo(input: NewTodo!): Todo!
-  updateTodo(input: NewTodo!): Todo!
-  deleteTodo(input: FindTodoById!): Todo!
-  toggleTodoDoneStatus(input: FindTodoById!): Todo!
-
-  createAssistant(input: NewAssistant!): Assistant!
-  updateAssistant(input: NewAssistant!): Assistant!
-  deleteAssistant(input: FindAssistantById!): Assistant!
+  updateTodo(input: UpdateTodo!): Todo!
+  deleteTodo(input: TodoById!): Todo!
+  toggleTodoDoneStatus(input: TodoById!): Todo!
 }
 
 input NewTodo {
   text: String!
-  assistantInitial: String!
 }
 
-input FindTodoById {
-  id: String!
+input UpdateTodo {
+  id: ID!
+  text: String!
 }
 
-input MarkTodoAsDone {
-  id: String!
-  done: Boolean!
-}
-
-input NewAssistant {
-  initial: String!
-  name: String!
-}
-
-input FindAssistantById {
-  id: String!
-}
-
-input FindAssistantByInitial {
-  initial: String!
+input TodoById {
+  id: ID!
 }
 `, BuiltIn: false},
 }
@@ -390,21 +274,6 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
-
-func (ec *executionContext) field_Mutation_createAssistant_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 model.NewAssistant
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNNewAssistant2githubᚗcomᚋbrandonᚑjulioᚑtᚋgolangᚑgraphqlᚑtodoᚋgraphᚋmodelᚐNewAssistant(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-}
 
 func (ec *executionContext) field_Mutation_createTodo_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -421,28 +290,13 @@ func (ec *executionContext) field_Mutation_createTodo_args(ctx context.Context, 
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_deleteAssistant_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 model.FindAssistantByID
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNFindAssistantById2githubᚗcomᚋbrandonᚑjulioᚑtᚋgolangᚑgraphqlᚑtodoᚋgraphᚋmodelᚐFindAssistantByID(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-}
-
 func (ec *executionContext) field_Mutation_deleteTodo_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.FindTodoByID
+	var arg0 model.TodoByID
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNFindTodoById2githubᚗcomᚋbrandonᚑjulioᚑtᚋgolangᚑgraphqlᚑtodoᚋgraphᚋmodelᚐFindTodoByID(ctx, tmp)
+		arg0, err = ec.unmarshalNTodoById2githubᚗcomᚋbrandonᚑjulioᚑtᚋgolangᚑgraphqlᚑtodoᚋgraphᚋmodelᚐTodoByID(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -454,25 +308,10 @@ func (ec *executionContext) field_Mutation_deleteTodo_args(ctx context.Context, 
 func (ec *executionContext) field_Mutation_toggleTodoDoneStatus_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.FindTodoByID
+	var arg0 model.TodoByID
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNFindTodoById2githubᚗcomᚋbrandonᚑjulioᚑtᚋgolangᚑgraphqlᚑtodoᚋgraphᚋmodelᚐFindTodoByID(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_updateAssistant_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 model.NewAssistant
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNNewAssistant2githubᚗcomᚋbrandonᚑjulioᚑtᚋgolangᚑgraphqlᚑtodoᚋgraphᚋmodelᚐNewAssistant(ctx, tmp)
+		arg0, err = ec.unmarshalNTodoById2githubᚗcomᚋbrandonᚑjulioᚑtᚋgolangᚑgraphqlᚑtodoᚋgraphᚋmodelᚐTodoByID(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -484,10 +323,10 @@ func (ec *executionContext) field_Mutation_updateAssistant_args(ctx context.Cont
 func (ec *executionContext) field_Mutation_updateTodo_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.NewTodo
+	var arg0 model.UpdateTodo
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNNewTodo2githubᚗcomᚋbrandonᚑjulioᚑtᚋgolangᚑgraphqlᚑtodoᚋgraphᚋmodelᚐNewTodo(ctx, tmp)
+		arg0, err = ec.unmarshalNUpdateTodo2githubᚗcomᚋbrandonᚑjulioᚑtᚋgolangᚑgraphqlᚑtodoᚋgraphᚋmodelᚐUpdateTodo(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -548,111 +387,6 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 // endregion ************************** directives.gotpl **************************
 
 // region    **************************** field.gotpl *****************************
-
-func (ec *executionContext) _Assistant_id(ctx context.Context, field graphql.CollectedField, obj *model.Assistant) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Assistant",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Assistant_initial(ctx context.Context, field graphql.CollectedField, obj *model.Assistant) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Assistant",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Initial, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Assistant_name(ctx context.Context, field graphql.CollectedField, obj *model.Assistant) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Assistant",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
 
 func (ec *executionContext) _Mutation_createTodo(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
@@ -721,7 +455,7 @@ func (ec *executionContext) _Mutation_updateTodo(ctx context.Context, field grap
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateTodo(rctx, args["input"].(model.NewTodo))
+		return ec.resolvers.Mutation().UpdateTodo(rctx, args["input"].(model.UpdateTodo))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -763,7 +497,7 @@ func (ec *executionContext) _Mutation_deleteTodo(ctx context.Context, field grap
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteTodo(rctx, args["input"].(model.FindTodoByID))
+		return ec.resolvers.Mutation().DeleteTodo(rctx, args["input"].(model.TodoByID))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -805,7 +539,7 @@ func (ec *executionContext) _Mutation_toggleTodoDoneStatus(ctx context.Context, 
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().ToggleTodoDoneStatus(rctx, args["input"].(model.FindTodoByID))
+		return ec.resolvers.Mutation().ToggleTodoDoneStatus(rctx, args["input"].(model.TodoByID))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -822,133 +556,7 @@ func (ec *executionContext) _Mutation_toggleTodoDoneStatus(ctx context.Context, 
 	return ec.marshalNTodo2ᚖgithubᚗcomᚋbrandonᚑjulioᚑtᚋgolangᚑgraphqlᚑtodoᚋgraphᚋmodelᚐTodo(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_createAssistant(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_createAssistant_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateAssistant(rctx, args["input"].(model.NewAssistant))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.Assistant)
-	fc.Result = res
-	return ec.marshalNAssistant2ᚖgithubᚗcomᚋbrandonᚑjulioᚑtᚋgolangᚑgraphqlᚑtodoᚋgraphᚋmodelᚐAssistant(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Mutation_updateAssistant(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_updateAssistant_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateAssistant(rctx, args["input"].(model.NewAssistant))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.Assistant)
-	fc.Result = res
-	return ec.marshalNAssistant2ᚖgithubᚗcomᚋbrandonᚑjulioᚑtᚋgolangᚑgraphqlᚑtodoᚋgraphᚋmodelᚐAssistant(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Mutation_deleteAssistant(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_deleteAssistant_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteAssistant(rctx, args["input"].(model.FindAssistantByID))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.Assistant)
-	fc.Result = res
-	return ec.marshalNAssistant2ᚖgithubᚗcomᚋbrandonᚑjulioᚑtᚋgolangᚑgraphqlᚑtodoᚋgraphᚋmodelᚐAssistant(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Query_assistants(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_allTodo(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -966,42 +574,7 @@ func (ec *executionContext) _Query_assistants(ctx context.Context, field graphql
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Assistants(rctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.Assistant)
-	fc.Result = res
-	return ec.marshalNAssistant2ᚕᚖgithubᚗcomᚋbrandonᚑjulioᚑtᚋgolangᚑgraphqlᚑtodoᚋgraphᚋmodelᚐAssistantᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Query_todos(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Todos(rctx)
+		return ec.resolvers.Query().AllTodo(rctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1192,41 +765,6 @@ func (ec *executionContext) _Todo_done(ctx context.Context, field graphql.Collec
 	res := resTmp.(bool)
 	fc.Result = res
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Todo_assistant(ctx context.Context, field graphql.CollectedField, obj *model.Todo) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Todo",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Todo().Assistant(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.Assistant)
-	fc.Result = res
-	return ec.marshalNAssistant2ᚖgithubᚗcomᚋbrandonᚑjulioᚑtᚋgolangᚑgraphqlᚑtodoᚋgraphᚋmodelᚐAssistant(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) ___Directive_name(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
@@ -2316,122 +1854,6 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
-func (ec *executionContext) unmarshalInputFindAssistantById(ctx context.Context, obj interface{}) (model.FindAssistantByID, error) {
-	var it model.FindAssistantByID
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "id":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-			it.ID, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputFindAssistantByInitial(ctx context.Context, obj interface{}) (model.FindAssistantByInitial, error) {
-	var it model.FindAssistantByInitial
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "initial":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("initial"))
-			it.Initial, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputFindTodoById(ctx context.Context, obj interface{}) (model.FindTodoByID, error) {
-	var it model.FindTodoByID
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "id":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-			it.ID, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputMarkTodoAsDone(ctx context.Context, obj interface{}) (model.MarkTodoAsDone, error) {
-	var it model.MarkTodoAsDone
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "id":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-			it.ID, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "done":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("done"))
-			it.Done, err = ec.unmarshalNBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputNewAssistant(ctx context.Context, obj interface{}) (model.NewAssistant, error) {
-	var it model.NewAssistant
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "initial":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("initial"))
-			it.Initial, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "name":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputNewTodo(ctx context.Context, obj interface{}) (model.NewTodo, error) {
 	var it model.NewTodo
 	var asMap = obj.(map[string]interface{})
@@ -2446,11 +1868,51 @@ func (ec *executionContext) unmarshalInputNewTodo(ctx context.Context, obj inter
 			if err != nil {
 				return it, err
 			}
-		case "assistantInitial":
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputTodoById(ctx context.Context, obj interface{}) (model.TodoByID, error) {
+	var it model.TodoByID
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("assistantInitial"))
-			it.AssistantInitial, err = ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUpdateTodo(ctx context.Context, obj interface{}) (model.UpdateTodo, error) {
+	var it model.UpdateTodo
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "text":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("text"))
+			it.Text, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -2467,43 +1929,6 @@ func (ec *executionContext) unmarshalInputNewTodo(ctx context.Context, obj inter
 // endregion ************************** interface.gotpl ***************************
 
 // region    **************************** object.gotpl ****************************
-
-var assistantImplementors = []string{"Assistant"}
-
-func (ec *executionContext) _Assistant(ctx context.Context, sel ast.SelectionSet, obj *model.Assistant) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, assistantImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Assistant")
-		case "id":
-			out.Values[i] = ec._Assistant_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "initial":
-			out.Values[i] = ec._Assistant_initial(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "name":
-			out.Values[i] = ec._Assistant_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
 
 var mutationImplementors = []string{"Mutation"}
 
@@ -2540,21 +1965,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "createAssistant":
-			out.Values[i] = ec._Mutation_createAssistant(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "updateAssistant":
-			out.Values[i] = ec._Mutation_updateAssistant(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "deleteAssistant":
-			out.Values[i] = ec._Mutation_deleteAssistant(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -2581,7 +1991,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
-		case "assistants":
+		case "allTodo":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -2589,21 +1999,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_assistants(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
-		case "todos":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_todos(ctx, field)
+				res = ec._Query_allTodo(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -2638,32 +2034,18 @@ func (ec *executionContext) _Todo(ctx context.Context, sel ast.SelectionSet, obj
 		case "id":
 			out.Values[i] = ec._Todo_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				invalids++
 			}
 		case "text":
 			out.Values[i] = ec._Todo_text(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				invalids++
 			}
 		case "done":
 			out.Values[i] = ec._Todo_done(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				invalids++
 			}
-		case "assistant":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Todo_assistant(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -2920,57 +2302,6 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
-func (ec *executionContext) marshalNAssistant2githubᚗcomᚋbrandonᚑjulioᚑtᚋgolangᚑgraphqlᚑtodoᚋgraphᚋmodelᚐAssistant(ctx context.Context, sel ast.SelectionSet, v model.Assistant) graphql.Marshaler {
-	return ec._Assistant(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNAssistant2ᚕᚖgithubᚗcomᚋbrandonᚑjulioᚑtᚋgolangᚑgraphqlᚑtodoᚋgraphᚋmodelᚐAssistantᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Assistant) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNAssistant2ᚖgithubᚗcomᚋbrandonᚑjulioᚑtᚋgolangᚑgraphqlᚑtodoᚋgraphᚋmodelᚐAssistant(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
-}
-
-func (ec *executionContext) marshalNAssistant2ᚖgithubᚗcomᚋbrandonᚑjulioᚑtᚋgolangᚑgraphqlᚑtodoᚋgraphᚋmodelᚐAssistant(ctx context.Context, sel ast.SelectionSet, v *model.Assistant) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._Assistant(ctx, sel, v)
-}
-
 func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -2986,16 +2317,6 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) unmarshalNFindAssistantById2githubᚗcomᚋbrandonᚑjulioᚑtᚋgolangᚑgraphqlᚑtodoᚋgraphᚋmodelᚐFindAssistantByID(ctx context.Context, v interface{}) (model.FindAssistantByID, error) {
-	res, err := ec.unmarshalInputFindAssistantById(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNFindTodoById2githubᚗcomᚋbrandonᚑjulioᚑtᚋgolangᚑgraphqlᚑtodoᚋgraphᚋmodelᚐFindTodoByID(ctx context.Context, v interface{}) (model.FindTodoByID, error) {
-	res, err := ec.unmarshalInputFindTodoById(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
 	res, err := graphql.UnmarshalID(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -3009,11 +2330,6 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 		}
 	}
 	return res
-}
-
-func (ec *executionContext) unmarshalNNewAssistant2githubᚗcomᚋbrandonᚑjulioᚑtᚋgolangᚑgraphqlᚑtodoᚋgraphᚋmodelᚐNewAssistant(ctx context.Context, v interface{}) (model.NewAssistant, error) {
-	res, err := ec.unmarshalInputNewAssistant(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNNewTodo2githubᚗcomᚋbrandonᚑjulioᚑtᚋgolangᚑgraphqlᚑtodoᚋgraphᚋmodelᚐNewTodo(ctx context.Context, v interface{}) (model.NewTodo, error) {
@@ -3085,6 +2401,16 @@ func (ec *executionContext) marshalNTodo2ᚖgithubᚗcomᚋbrandonᚑjulioᚑt�
 		return graphql.Null
 	}
 	return ec._Todo(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNTodoById2githubᚗcomᚋbrandonᚑjulioᚑtᚋgolangᚑgraphqlᚑtodoᚋgraphᚋmodelᚐTodoByID(ctx context.Context, v interface{}) (model.TodoByID, error) {
+	res, err := ec.unmarshalInputTodoById(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNUpdateTodo2githubᚗcomᚋbrandonᚑjulioᚑtᚋgolangᚑgraphqlᚑtodoᚋgraphᚋmodelᚐUpdateTodo(ctx context.Context, v interface{}) (model.UpdateTodo, error) {
+	res, err := ec.unmarshalInputUpdateTodo(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {
