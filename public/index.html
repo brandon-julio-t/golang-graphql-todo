@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+          name="viewport">
+    <meta content="ie=edge" http-equiv="X-UA-Compatible">
+    <title>Go + GraphQL</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!--
+    TODO
+    - change script post query to match schema
+    - implements unimplemented methods
+-->
+
+<h2>Create Todo</h2>
+
+<form id="form-todo">
+    <label>
+        Text:
+        <input autofocus id="input-todo-text" type="text" name="todo-text">
+    </label>
+    <button type="submit">Submit</button>
+</form>
+
+<h2>Todos</h2>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Text</th>
+        <th>Done</th>
+        <th>UserID</th>
+        <th>UserName</th>
+    </tr>
+    </thead>
+    <tbody id="table-body-todos"></tbody>
+</table>
+
+<script crossorigin="anonymous"
+        integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

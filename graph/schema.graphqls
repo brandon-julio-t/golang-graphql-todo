@@ -1,0 +1,67 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+# # # # # # #
+# Q U E R Y #
+# # # # # # #
+
+type Query {
+  assistants: [Assistant!]!
+  todos: [Todo!]!
+}
+
+type Todo {
+  id: ID!
+  text: String!
+  done: Boolean!
+  assistant: Assistant!
+}
+
+type Assistant {
+  id: ID!
+  initial: String!
+  name: String!
+}
+
+# # # # # # # # # #
+# M U T A T I O N #
+# # # # # # # # # #
+
+type Mutation {
+  createTodo(input: NewTodo!): Todo!
+  updateTodo(input: NewTodo!): Todo!
+  deleteTodo(input: FindTodoById!): Todo!
+  toggleTodoDoneStatus(input: FindTodoById!): Todo!
+
+  createAssistant(input: NewAssistant!): Assistant!
+  updateAssistant(input: NewAssistant!): Assistant!
+  deleteAssistant(input: FindAssistantById!): Assistant!
+}
+
+input NewTodo {
+  text: String!
+  assistantInitial: String!
+}
+
+input FindTodoById {
+  id: String!
+}
+
+input MarkTodoAsDone {
+  id: String!
+  done: Boolean!
+}
+
+input NewAssistant {
+  initial: String!
+  name: String!
+}
+
+input FindAssistantById {
+  id: String!
+}
+
+input FindAssistantByInitial {
+  initial: String!
+}
