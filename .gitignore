@@ -22,3 +22,6 @@
 
 /public/*
 /tmp/*
+/tmp/
+
+.env

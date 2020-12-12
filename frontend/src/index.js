@@ -13,53 +13,8 @@ import("jquery").then($ => {
             const id = todoId.val()
             const text = todoText.val()
 
-            if (id) {
-                graphql(`
-                    mutation updateTodo($id: ID!, $text: String!) {
-                        updateTodo(input: {
-                            id: $id,
-                            text: $text
-                        }) {
-                            id
-                            text
-                            done
-                        }
-                    }
-                `, {id, text}).done(({data}) => {
-                    const {updateTodo} = data
-
-                    todoList.children().each(function () {
-                        const elem = $(this)
-                        const id = elem.data("id")
-                        if (id === updateTodo.id) {
-                            elem.children("td:eq(0)").html(updateTodo.text)
-                        }
-                    })
-
-                    todoId.val('')
-                    todoText.val('')
-                })
-
-                return
-            }
-
-            graphql(`
-                mutation createTodo($text: String!) {
-                    createTodo(input: { text: $text }) {
-                        id
-                        text
-                        done
-                    }
-                }
-            `, {text}).done(({data}) => {
-                const {createTodo} = data
-
-                const item = makeTodoRow(createTodo)
-                todoList.append(item)
-
-                todoText.val('')
-                todoText.focus()
-            })
+            if (id) return updateTodo(id, text);
+            createTodo(text);
         })
 
         function getAllTodo() {
@@ -136,6 +91,54 @@ import("jquery").then($ => {
                         }
                     })
                 })
+            })
+        }
+
+        function updateTodo(id, text) {
+            graphql(`
+                    mutation updateTodo($id: ID!, $text: String!) {
+                        updateTodo(input: {
+                            id: $id,
+                            text: $text
+                        }) {
+                            id
+                            text
+                            done
+                        }
+                    }
+                `, {id, text}).done(({data}) => {
+                const {updateTodo} = data
+
+                todoList.children().each(function () {
+                    const elem = $(this)
+                    const id = elem.data("id")
+                    if (id === updateTodo.id) {
+                        elem.children("td:eq(0)").html(updateTodo.text)
+                    }
+                })
+
+                todoId.val('')
+                todoText.val('')
+            })
+        }
+
+        function createTodo(text) {
+            graphql(`
+                mutation createTodo($text: String!) {
+                    createTodo(input: { text: $text }) {
+                        id
+                        text
+                        done
+                    }
+                }
+            `, {text}).done(({data}) => {
+                const {createTodo} = data
+
+                const item = makeTodoRow(createTodo)
+                todoList.append(item)
+
+                todoText.val('')
+                todoText.focus()
             })
         }
 

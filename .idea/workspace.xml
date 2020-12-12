@@ -20,9 +20,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e2852bf4-a590-4c7a-ae23-0dd41f217e31" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/frontend/src/style.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/repositories/TodoRepository.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/services/TodoService.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/yarn.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.air.toml" beforeDir="false" afterPath="$PROJECT_DIR$/.air.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gqlgen.yml" beforeDir="false" afterPath="$PROJECT_DIR$/gqlgen.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graph/generated/generated.go" beforeDir="false" afterPath="$PROJECT_DIR$/graph/generated/generated.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graph/model/models_gen.go" beforeDir="false" afterPath="$PROJECT_DIR$/graph/model/models_gen.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graph/resolver.go" beforeDir="false" afterPath="$PROJECT_DIR$/graph/resolver.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graph/schema.resolvers.go" beforeDir="false" afterPath="$PROJECT_DIR$/graph/schema.resolvers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tmp/build-errors.log" beforeDir="false" afterPath="$PROJECT_DIR$/tmp/build-errors.log" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,6 +51,8 @@
         <option value="HTML File" />
         <option value="JavaScript File" />
         <option value="CSS File" />
+        <option value="TypeScript File" />
+        <option value="Go File" />
       </list>
     </option>
   </component>
@@ -60,6 +78,8 @@
   </component>
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="DatabaseDriversLRU" value="postgresql" />
+    <property name="DefaultGoTemplateProperty" value="Go File" />
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
@@ -70,14 +90,22 @@
     <property name="js.last.introduce.type" value="CONST" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+    <property name="ts.external.directory.path" value="D:\Jetbrains\Toolbox\apps\Goland\ch-0\203.5981.98\plugins\JavaScriptLanguage\jsLanguageServicesImpl\external" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\git clones\golang-graphql-todo\frontend\src" />
     </key>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="e2852bf4-a590-4c7a-ae23-0dd41f217e31" name="Default Changelist" comment="" />
@@ -89,7 +117,7 @@
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="2" />
+    <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -108,19 +136,5 @@
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
-  </component>
-  <component name="WindowStateProjectService">
-    <state x="461" y="164" key="SettingsEditor" timestamp="1607683621783">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="461" y="164" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1607683621783" />
-    <state x="826" y="386" width="250" height="278" key="jetbrains.javascript.buildTools.run-task-popup" timestamp="1607677687972">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="826" y="386" width="250" height="278" key="jetbrains.javascript.buildTools.run-task-popup/0.0.1920.1040@0.0.1920.1040" timestamp="1607677687972" />
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1607687864292">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1607687864292" />
   </component>
 </project>

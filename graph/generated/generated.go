@@ -250,7 +250,7 @@ type Todo {
 
 type Mutation {
   createTodo(input: NewTodo!): Todo!
-  updateTodo(input: UpdateTodo!): Todo!
+  updateTodo(input: UpdateTodoFromInput!): Todo!
   deleteTodo(input: TodoById!): Todo!
   toggleTodoDoneStatus(input: TodoById!): Todo!
 }
@@ -259,7 +259,7 @@ input NewTodo {
   text: String!
 }
 
-input UpdateTodo {
+input UpdateTodoFromInput {
   id: ID!
   text: String!
 }

@@ -4,6 +4,7 @@
     "dev": "parcel watch ./src/**/*.html  --out-dir ./../public",
     "build": "parcel build ./src/**/*.html --out-dir ./../public"
   },
+  "license": "MIT",
   "dependencies": {
     "jquery": "^3.5.1",
     "parcel-bundler": "^1.12.4"
